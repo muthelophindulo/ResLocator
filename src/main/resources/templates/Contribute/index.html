@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResLocator&copy; - Student Accommodation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a5fb4;
+            --primary-dark: #1c71d8;
+            --secondary: #26a269;
+            --accent: #e5a50a;
+            --light: #f8f9fa;
+            --dark: #241f31;
+            --success: #26a269;
+            --border: #dee2e6;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Video Hero Section */
+        .video-hero {
+            position: relative;
+            height: 90vh;
+            min-height: 600px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
+
+        .video-hero video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            object-fit: cover;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, 
+                rgba(26, 95, 180, 0.85) 0%,
+                rgba(38, 162, 105, 0.75) 100%);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Optional: Add a subtle animation to the text */
+        .hero-content h1 {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .hero-content p {
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        .hero-content .btn {
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Mobile optimization for video */
+        @media (max-width: 768px) {
+            .video-hero {
+                height: 70vh;
+                min-height: 500px;
+            }
+            
+            .video-hero video {
+                /* On mobile, use poster image as fallback if video doesn't load */
+                display: none;
+            }
+            
+            .video-hero::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(to right, 
+                    rgba(26, 95, 180, 0.9), 
+                    rgba(38, 162, 105, 0.9)), 
+                    url('https://www.pexels.com/download/video/7683858/');
+                background-size: cover;
+                background-position: center;
+                z-index: 0;
+            }
+            
+            .hero-content h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero-content p {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Tablet optimization */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .video-hero {
+                height: 80vh;
+            }
+            
+            .hero-content h1 {
+                font-size: 2.8rem;
+            }
+        }
+
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        /* Custom Navbar Styling */
+        .navbar-custom {
+            background: linear-gradient(135deg, #1a5fb4, #1c71d8);
+            box-shadow: var(--shadow);
+            padding: 0.5rem 0;
+        }
+
+        .navbar-brand-custom {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white !important;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand-custom i {
+            margin-right: 8px;
+        }
+
+        .nav-link-custom {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            margin: 0 2px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link-custom:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white !important;
+            transform: translateY(-2px);
+        }
+
+        .nav-link-custom.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: white !important;
+        }
+
+        /* Account Info Styles */
+        .account-info {
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+
+        .account-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #1a5fb4, #26a269);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .account-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .account-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .account-role {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        /* Dropdown Styles */
+        .dropdown-menu-custom {
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 0.5rem;
+            min-width: 220px;
+        }
+
+        .dropdown-item-custom {
+            padding: 0.6rem 1rem;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .dropdown-item-custom i {
+            width: 20px;
+            margin-right: 10px;
+            color: var(--primary);
+        }
+
+        .dropdown-item-custom:hover {
+            background-color: #f0f7ff;
+            color: var(--primary);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, rgba(26, 95, 180, 0.9), rgba(38, 162, 105, 0.9)), 
+                        url('https://www.pexels.com/download/video/7683858/');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 120px 0 80px;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.95;
+        }
+
+        /* Search Form */
+        .search-form {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            margin-top: -40px;
+            position: relative;
+            z-index: 100;
+        }
+
+        .form-control-lg {
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            padding: 15px 20px;
+            transition: all 0.3s;
+        }
+
+        .form-control-lg:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.25rem rgba(26, 95, 180, 0.25);
+        }
+
+        /* Stats Counter */
+        .stats-counter {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin: 40px 0;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Feature Cards */
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            height: 100%;
+            transition: all 0.3s ease;
+            border: 1px solid #e0e0e0;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            color: white;
+            font-size: 1.8rem;
+        }
+
+        /* University Partners */
+        .university-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .university-logo {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100px;
+            transition: all 0.3s ease;
+            border: 1px solid #e0e0e0;
+        }
+
+        .university-logo:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .university-logo img {
+            max-width: 100%;
+            max-height: 60px;
+            filter: grayscale(100%);
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+
+        .university-logo:hover img {
+            filter: grayscale(0);
+            opacity: 1;
+        }
+
+        /* Testimonials */
+        .testimonial-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            border-left: 5px solid var(--primary);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .testimonial-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-right: 20px;
+        }
+
+        /* Content Area */
+        .content-area {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 15px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+        }
+
+        /* Notification Badge */
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #e5a50a;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 60px 0 30px;
+            margin-top: 80px;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 991.98px) {
+            .navbar-collapse {
+                background-color: rgba(0, 0, 0, 0.95);
+                border-radius: 10px;
+                padding: 1rem;
+                margin-top: 10px;
+            }
+            
+            .nav-link-custom {
+                padding: 0.75rem 1rem !important;
+                margin: 2px 0;
+            }
+            
+            .account-info {
+                margin-top: 1rem;
+                padding: 1rem;
+                background-color: rgba(255, 255, 255, 0.1);
+                border-radius: 8px;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .search-form {
+                margin-top: 20px;
+            }
+            
+            .hero-section {
+                padding: 80px 0 40px;
+            }
+        }
+
+        /* Quick Links */
+        .quick-links {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            z-index: 1000;
+        }
+
+        .quick-link-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .quick-link-btn:hover {
+            transform: scale(1.1);
+            background: var(--secondary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+        <div class="container-fluid">
+            <!-- Brand/Logo -->
+            <a class="navbar-brand navbar-brand-custom" href="index.html">
+                <i class="fas fa-home"></i>Res<span style="color: #ffd700;">Locator</span>
+                <small class="ms-2" style="font-size: 0.7rem; opacity: 0.8;">Student Edition</small>
+            </a>
+
+            <!-- Mobile Toggle Button -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+            </button>
+
+            <!-- Navbar Content -->
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <!-- Navigation Links -->
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-custom active" href="index.html">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-custom" href="search.html">
+                            <i class="fas fa-search"></i> Find Residences
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-custom" href="#">
+                            <i class="bi bi-question-circle"></i> My Applications
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-custom" href="#">
+                            <i class="fas fa-bookmark"></i> Saved
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Account Section -->
+                <div class="d-flex align-items-center">
+                    <!-- Notifications -->
+                    <div class="dropdown me-3 position-relative">
+                        <a class="nav-link nav-link-custom" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge">3</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-custom">
+                            <li><h6 class="dropdown-header">Notifications</h6></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="#"><i class="fas fa-check-circle text-success"></i> Application Approved</a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="#"><i class="fas fa-calendar-alt text-primary"></i> Viewing Scheduled</a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="#"><i class="fas fa-exclamation-triangle text-warning"></i> New Messages</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Account Dropdown -->
+                    <div class="dropdown">
+                        <button class="btn p-0 border-0 d-flex align-items-center" type="button" data-bs-toggle="dropdown">
+                            <div class="account-info">
+                                <div class="account-avatar">JD</div>
+                                <div class="account-details d-none d-md-block">
+                                    <span class="account-name">John Doe</span>
+                                    <span class="account-role">Student @ UKZN</span>
+                                </div>
+                                <i class="fas fa-chevron-down ms-2" style="color: white;"></i>
+                            </div>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-custom">
+                            <li class="px-3 py-2">
+                                <div class="d-flex align-items-center">
+                                    <div class="account-avatar me-3">JD</div>
+                                    <div>
+                                        <h6 class="mb-0">John Doe</h6>
+                                        <small class="text-muted">Computer Science Student</small><br>
+                                        <small class="text-muted">University of KwaZulu-Natal</small>
+                                    </div>
+                                </div>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="#"><i class="fas fa-user"></i> My Profile</a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="#"><i class="fas fa-file-alt"></i> Applications</a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item dropdown-item-custom text-danger" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="video-hero">
+        <video autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1523580494863-6f3031224c94?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80">
+            <source src="https://www.pexels.com/download/video/7683858/" type="video/mp4">
+            <source src="https://www.pexels.com/download/video/7683858/" type="video/webm">
+            Your browser does not support the video tag.
+        </video>
+        
+        <div class="video-overlay"></div>
+        
+        <div class="container h-100">
+            <div class="row align-items-center h-100">
+                <div class="col-lg-10 mx-auto text-center text-white hero-content">
+                    <h1 class="display-4 fw-bold mb-4">Find Your Perfect Student Accommodation</h1>
+                    <p class="lead mb-4">Discover safe, affordable, and verified student residences across South African universities</p>
+                    <div class="d-flex flex-wrap justify-content-center gap-3">
+                        <a href="search.html" class="btn btn-light btn-lg px-5 py-3">
+                            <i class="fas fa-search-location"></i> Browse Residences
+                        </a>
+                        <button class="btn btn-outline-light btn-lg px-5 py-3" data-bs-toggle="modal" data-bs-target="#guideModal">
+                            <i class="bi bi-info-circle me-2"></i> Student Guide
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Search Form -->
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="search-form">
+                    <h4 class="text-center mb-4">Find Student Accommodation</h4>
+                    <form id="quickSearchForm">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <select class="form-select form-control-lg" id="universitySelect">
+                                    <option selected>Select University</option>
+                                    <option value="uct">University of Cape Town (UCT)</option>
+                                    <option value="wits">University of the Witwatersrand (Wits)</option>
+                                    <option value="up">University of Pretoria (UP)</option>
+                                    <option value="ukzn">University of KwaZulu-Natal (UKZN)</option>
+                                    <option value="uj">University of Johannesburg (UJ)</option>
+                                    <option value="sun">Stellenbosch University (SUN)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select form-control-lg" id="accommodationType">
+                                    <option selected>Accommodation Type</option>
+                                    <option value="residence">University Residence</option>
+                                    <option value="private">Private Residence</option>
+                                    <option value="flat">Shared Flat</option>
+                                    <option value="house">Student House</option>
+                                    <option value="digs">Digs (Room Rental)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select form-control-lg" id="budgetRange">
+                                    <option selected>Budget Range</option>
+                                    <option value="0-2000">R0 - R2000 pm</option>
+                                    <option value="2000-4000">R2000 - R4000 pm</option>
+                                    <option value="4000-6000">R4000 - R6000 pm</option>
+                                    <option value="6000+">R6000+ pm</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary btn-lg w-100">
+                                    <i class="fas fa-search"></i> Search
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Counter (Lies only... AI) -->
+    <div class="container">
+        <div class="stats-counter">
+            <div class="row text-center">
+                <div class="col-md-3 col-6 mb-4">
+                    <div class="stat-number">3,500+</div>
+                    <div class="stat-label">Student Residences</div>
+                </div>
+                <div class="col-md-3 col-6 mb-4">
+                    <div class="stat-number">26</div>
+                    <div class="stat-label">Universities</div>
+                </div>
+                <div class="col-md-3 col-6 mb-4">
+                    <div class="stat-number">20,000+</div>
+                    <div class="stat-label">Students Assisted</div>
+                </div>
+                <div class="col-md-3 col-6 mb-4">
+                    <div class="stat-number">5★</div>
+                    <div class="stat-label">Student Rating</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="container content-area">
+        <h2 class="text-center mb-5">Why Choose ResLocator?</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h4>Verified & Safe</h4>
+                    <p>All residences undergo safety inspections and landlord verification to ensure student safety.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <h4>Affordable Options</h4>
+                    <p>Find accommodation within your budget with transparent pricing and no hidden fees.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h4>Student Community</h4>
+                    <p>Join residence communities and connect with fellow students from your university.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- University Partners -->
+    <div class="container content-area mt-5">
+        <h2 class="text-center mb-5">Partner Universities</h2>
+        <div class="university-grid">
+            <div class="university-logo">
+                <span style="font-weight: bold; color: var(--primary);">UCT</span>
+            </div>
+            <div class="university-logo">
+                <span style="font-weight: bold; color: var(--primary);">WITS</span>
+            </div>
+            <div class="university-logo">
+                <span style="font-weight: bold; color: var(--primary);">UP</span>
+            </div>
+            <div class="university-logo">
+                <span style="font-weight: bold; color: var(--primary);">UKZN</span>
+            </div>
+            <div class="university-logo">
+                <span style="font-weight: bold; color: var(--primary);">UJ</span>
+            </div>
+            <div class="university-logo">
+                <span style="font-weight: bold; color: var(--primary);">SUN</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Testimonials -->
+    <div class="container content-area mt-5">
+        <h2 class="text-center mb-5">Student Testimonials</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="testimonial-avatar">AZ</div>
+                        <div>
+                            <h5 class="mb-0">Awande Z.</h5>
+                            <small class="text-muted">Wits University</small>
+                        </div>
+                    </div>
+                    <p>"Found a great residence near campus within my budget. The process was seamless!"</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="testimonial-avatar">PM</div>
+                        <div>
+                            <h5 class="mb-0">Phindulo M.</h5>
+                            <small class="text-muted">University of Pretoria</small>
+                        </div>
+                    </div>
+                    <p>"The verification process gave me peace of mind. My residence is safe and well-maintained."</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="testimonial-avatar">KS</div>
+                        <div>
+                            <h5 class="mb-0">Katlego S.</h5>
+                            <small class="text-muted">UKZN Student</small>
+                        </div>
+                    </div>
+                    <p>"Easy to use platform with real student reviews."</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h5 class="mb-3">ResLocator</h5>
+                    <p class="opacity-75">South Africa's leading student accommodation platform connecting students with safe, affordable residences.</p>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-white fs-5"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-white fs-5"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-white fs-5"><i class="bi bi-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4">
+                    <h6>For Students</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="search.html" class="text-white opacity-75 text-decoration-none">Find Accommodation</a></li>
+                        <li><a href="#" class="text-white opacity-75 text-decoration-none">Student Guide</a></li>
+                        <li><a href="#" class="text-white opacity-75 text-decoration-none">Safety Tips</a></li>
+                        <li><a href="#" class="text-white opacity-75 text-decoration-none">Budget Calculator</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4">
+                    <h6>For Landlords</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white opacity-75 text-decoration-none">List Property</a></li>
+                        <li><a href="#" class="text-white opacity-75 text-decoration-none">Verification</a></li>
+                        <li><a href="#" class="text-white opacity-75 text-decoration-none">Resources</a></li>
+                        <li><a href="#" class="text-white opacity-75 text-decoration-none">Support</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-4 mb-4">
+                    <h6>Need Help?</h6>
+                    <p class="opacity-75">Contact our student support team</p>
+                    <div class="mb-3">
+                        <a href="mailto:support@reslocator.co.za" class="text-white text-decoration-none">
+                            <i class="bi bi-envelope me-2"></i>support@reslocator.co.za
+                        </a>
+                    </div>
+                    <div>
+                        <a href="tel:+27123456789" class="text-white text-decoration-none">
+                            <i class="bi bi-telephone me-2"></i>+27 12 345 6789
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <hr class="opacity-25">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0 opacity-75">&copy; 2024 ResLocator Student Accommodation. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="#" class="text-white opacity-75 text-decoration-none me-3">Privacy Policy</a>
+                    <a href="#" class="text-white opacity-75 text-decoration-none">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Quick Action Buttons -->
+    <div class="quick-links">
+        <button class="quick-link-btn" data-bs-toggle="tooltip" data-bs-placement="left" title="Emergency Contact">
+            <i class="fas fa-phone-alt"></i>
+        </button>
+        <button class="quick-link-btn" data-bs-toggle="tooltip" data-bs-placement="left" title="Live Chat">
+            <i class="fas fa-comment"></i>
+        </button>
+        <a href="search.html" class="quick-link-btn" data-bs-toggle="tooltip" data-bs-placement="left" title="Quick Search">
+            <i class="fas fa-search"></i>
+        </a>
+    </div>
+
+    <!-- Guide Modal -->
+    <div class="modal fade" id="guideModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Student Accommodation Guide</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>Finding the Right Accommodation:</h6>
+                    <ul>
+                        <li>Consider proximity to campus and transportation</li>
+                        <li>Check safety features and security measures</li>
+                        <li>Review included amenities (WiFi, laundry, etc.)</li>
+                        <li>Understand the rental agreement terms</li>
+                        <li>Set a realistic budget including utilities</li>
+                    </ul>
+                    <h6 class="mt-4">Application Tips:</h6>
+                    <ul>
+                        <li>Apply early (recommended 3-4 months before semester)</li>
+                        <li>Prepare necessary documents in advance</li>
+                        <li>Read reviews from current/former residents</li>
+                        <li>Schedule viewings before committing</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="window.location.href='https://hectorpieterson.mandela.ac.za/letaba/media/Store/documents/First-Year-ResGuide-2016.pdf'">Download Full Guide</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Initializing tooltips
+        document.addEventListener('DOMContentLoaded', function() {
+            const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            tooltips.forEach(tooltip => new bootstrap.Tooltip(tooltip));
+            
+            // Quick search form
+            document.getElementById('quickSearchForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const university = document.getElementById('universitySelect').value;
+                const type = document.getElementById('accommodationType').value;
+                const budget = document.getElementById('budgetRange').value;
+                
+                if (university === 'Select University') {
+                    alert('Please select a university');
+                    return;
+                }
+                
+                // Redirection to search page with parameters
+                window.location.href = `search.html?uni=${university}&type=${type}&budget=${budget}`;
+            });
+            
+            // Notification interaction
+            const notificationBadge = document.querySelector('.notification-badge');
+            const notificationItems = document.querySelectorAll('.dropdown-menu-custom .dropdown-item-custom');
+            
+            notificationItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    if (notificationBadge) {
+                        let currentCount = parseInt(notificationBadge.textContent);
+                        if (currentCount > 0) {
+                            notificationBadge.textContent = currentCount - 1;
+                            if (currentCount - 1 === 0) {
+                                notificationBadge.style.display = 'none';
+                            }
+                        }
+                    }
+                });
+            });
+            
+            // Emergency contact
+            document.querySelector('.quick-link-btn[title="Emergency Contact"]').addEventListener('click', function() {
+                if (confirm('Call emergency student support line?')) {
+                    window.location.href = 'tel:+27800923676';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

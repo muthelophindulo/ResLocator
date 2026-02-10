@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Student Residences | ResLocator</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a5fb4;
+            --secondary: #26a269;
+            --accent: #e5a50a;
+            --light: #f8f9fa;
+            --dark: #241f31;
+            --success: #26a269;
+            --border: #dee2e6;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #f8f9fa;
+        }
+
+        /* Custom Navbar Styling */
+        .navbar-custom {
+            background: linear-gradient(135deg, #1a5fb4, #1c71d8);
+            box-shadow: var(--shadow);
+            padding: 0.5rem 0;
+        }
+
+        .navbar-brand-custom {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white !important;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand-custom i {
+            margin-right: 8px;
+        }
+
+        .nav-link-custom {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            margin: 0 2px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link-custom:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white !important;
+            transform: translateY(-2px);
+        }
+
+        .nav-link-custom.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: white !important;
+        }
+
+        /* Account Info Styles */
+        .account-info {
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+
+        .account-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #1a5fb4, #26a269);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .account-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .account-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .account-role {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        /* Dropdown Styles */
+        .dropdown-menu-custom {
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 0.5rem;
+            min-width: 220px;
+        }
+
+        .dropdown-item-custom {
+            padding: 0.6rem 1rem;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .dropdown-item-custom i {
+            width: 20px;
+            margin-right: 10px;
+            color: var(--secondary);
+        }
+
+        .dropdown-item-custom:hover {
+            background-color: #f0f7ff;
+            color: var(--secondary);
+        }
+
+        /* Notification Badge */
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #e5a50a;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Hero Section */
+        .search-hero {
+            background: linear-gradient(135deg, rgba(26, 95, 180, 0.9), rgba(38, 162, 105, 0.9)), 
+                        url('https://images.unsplash.com/photo-1523580494863-6f3031224c94?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 100px 0 50px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* Advanced Search Panel */
+        .search-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+        }
+
+        .search-panel h5 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        /* Places Grid */
+        .places-section {
+            padding: 30px 0;
+        }
+
+        .section-title {
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: var(--secondary);
+            border-radius: 2px;
+        }
+
+        /* Places Grid */
+        .places-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        /* Place Card - Student Residence */
+        .residence-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+            height: 450px;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .residence-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .residence-image {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .residence-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .residence-card:hover .residence-image img {
+            transform: scale(1.1);
+        }
+
+        /* Badges */
+        .verified-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--success);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .availability-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--accent);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Price tag */
+        .price-tag {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            background: var(--primary);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Residence Info */
+        .residence-info {
+            padding: 20px;
+            position: relative;
+        }
+
+        .residence-info h4 {
+            margin: 0 0 10px 0;
+            color: var(--primary);
+            font-size: 1.2rem;
+            line-height: 1.3;
+        }
+
+        .residence-location {
+            color: #666;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .residence-location i {
+            color: var(--secondary);
+        }
+
+        /* Residence Features */
+        .residence-features {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .feature {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .feature i {
+            color: var(--primary);
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        /* Distance Indicator */
+        .distance-indicator {
+            background: #e8f4fc;
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-top: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Quick Filters */
+        .filters-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        .filter-btn {
+            padding: 8px 20px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 25px;
+            color: #666;
+            font-weight: 500;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--secondary);
+            border-color: var(--secondary);
+            color: white;
+        }
+
+        /* Compare Bar */
+        .compare-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 15px 20px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .compare-bar.show {
+            transform: translateY(0);
+        }
+
+        /* Map View Toggle (This is for future use once we are advanced) */
+        .map-toggle {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            z-index: 999;
+        }
+
+        .map-toggle-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .map-toggle-btn:hover {
+            background: var(--secondary);
+            transform: scale(1.1);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 50px 0 20px;
+            margin-top: 80px;
+        }
+
+        /* Content Area */
+        .content-area {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 15px;
+        }
+
+        /* Mobile Control (Do not delete) */
+        @media (max-width: 991.98px) {
+            .navbar-collapse {
+                background-color: rgba(0, 0, 0, 0.95);
+                border-radius: 10px;
+                padding: 1rem;
+                margin-top: 10px;
+            }
+            
+            .nav-link-custom {
+                padding: 0.75rem 1rem !important;
+                margin: 2px 0;
+            }
+            
+            .account-info {
+                margin-top: 1rem;
+                padding: 1rem;
+                background-color: rgba(255, 255, 255, 0.1);
+                border-radius: 8px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .places-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 20px;
+            }
+            
+            .residence-card {
+                height: 350px;
+            }
+            
+            .search-hero {
+                padding: 80px 0 30px;
+            }
+            
+            .search-panel {
+                position: static;
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .places-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-hero {
+                padding: 60px 0 20px;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+        <div class="container">
+            <!-- Brand/Logo -->
+            <a class="navbar-brand navbar-brand-custom" href="index.html">
+                <i class="fas fa-home"></i>Res<span style="color: #ffd700;">Locator</span>
+                <small class="ms-2" style="font-size: 0.7rem; opacity: 0.8;">Student Edition</small>
+            </a>
+
+            <!-- Mobile Toggle Button -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+            </button>
+
+            <!-- Navbar Content -->
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <!-- Navigation Links -->
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-custom" href="index.html">
+                            <i class="fas fa-home me-1"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-custom active" href="search.html">
+                            <i class="fas fa-search me-1"></i> Find Residences
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-custom" href="#">
+                            <i class="bi bi-question-circle me-1"></i> My Applications
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Account Section -->
+                <div class="d-flex align-items-center">
+                    <!-- Notifications -->
+                    <div class="dropdown me-3 position-relative">
+                        <a class="nav-link nav-link-custom" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-chat-text text-light"></i>
+                            <span class="notification-badge">3</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-custom">
+                            <li><h6 class="dropdown-header">Messages</h6></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="#"><i class="bi bi-envelope text-primary"></i> New message from landlord</a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="#"><i class="bi bi-calendar-check text-success"></i> Viewing confirmed</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item dropdown-item-custom text-center" href="#">View all messages</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Account Dropdown -->
+                    <div class="dropdown">
+                        <button class="btn p-0 border-0 d-flex align-items-center" type="button" data-bs-toggle="dropdown">
+                            <div class="account-info">
+                                <div class="account-avatar">JD</div>
+                                <div class="account-details d-none d-md-block">
+                                    <span class="account-name">John Doe</span>
+                                    <span class="account-role">Student @ UKZN</span>
+                                </div>
+                                <i class="fas fa-chevron-down ms-2" style="color: white;"></i>
+                            </div>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-custom">
+                            <li class="px-3 py-2">
+                                <div class="d-flex align-items-center">
+                                    <div class="account-avatar me-3">JD</div>
+                                    <div>
+                                        <h6 class="mb-0">John Doe</h6>
+                                        <small class="text-muted">Computer Science Student</small><br>
+                                        <small class="text-muted">University of KwaZulu-Natal</small>
+                                    </div>
+                                </div>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="#"><i class="bi bi-person"></i> My Profile</a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="#"><i class="bi bi-heart"></i> Saved Residences</a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="#"><i class="bi bi-gear"></i> Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item dropdown-item-custom text-danger" href="#"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="search-hero">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h1 class="display-5 fw-bold mb-4">Find Student Accommodation in South Africa</h1>
+                    <p class="lead mb-4">Browse verified residences near your university with student-friendly amenities</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="row">
+            <!-- Advanced Search Panel, might help somewhere -->
+            <div class="col-lg-4">
+                <div class="search-panel">
+                    <h5><i class="fas fa-filter me-2"></i>Refine Search</h5>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">University</label>
+                        <select class="form-select" id="universityFilter">
+                            <option value="all">All Universities</option>
+                            <option value="uct">University of Cape Town</option>
+                            <option value="wits">University of the Witwatersrand</option>
+                            <option value="up">University of Pretoria</option>
+                            <option value="ukzn">University of KwaZulu-Natal</option>
+                            <option value="uj">University of Johannesburg</option>
+                            <option value="sun">Stellenbosch University</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Accommodation Type</label>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="typeResidence" checked>
+                            <label class="form-check-label" for="typeResidence">University Residence</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="typePrivate">
+                            <label class="form-check-label" for="typePrivate">Private Residence</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="typeShared">
+                            <label class="form-check-label" for="typeShared">Shared Flat</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="typeHouse">
+                            <label class="form-check-label" for="typeHouse">Student House</label>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Monthly Rent (R)</label>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span id="priceMin">1000</span>
+                            <span id="priceMax">10000</span>
+                        </div>
+                        <input type="range" class="form-range" min="1000" max="10000" step="500" id="priceRange">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Distance from Campus</label>
+                        <select class="form-select" id="distanceFilter">
+                            <option value="any">Any Distance</option>
+                            <option value="1">Within 1km</option>
+                            <option value="2">Within 2km</option>
+                            <option value="5">Within 5km</option>
+                            <option value="10">Within 10km</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Amenities</label>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="amenityWifi">
+                                    <label class="form-check-label" for="amenityWifi">WiFi</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="amenityLaundry">
+                                    <label class="form-check-label" for="amenityLaundry">Laundry</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="amenityKitchen">
+                                    <label class="form-check-label" for="amenityKitchen">Kitchen</label>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="amenitySecurity">
+                                    <label class="form-check-label" for="amenitySecurity">24/7 Security</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="amenityCleaning">
+                                    <label class="form-check-label" for="amenityCleaning">Cleaning Service</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="amenityStudy">
+                                    <label class="form-check-label" for="amenityStudy">Study Area</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary w-100" id="applyFilters">
+                        <i class="fas fa-search me-2"></i>Apply Filters
+                    </button>
+                    <button class="btn btn-outline-secondary w-100 mt-2" id="resetFilters">
+                        Reset All Filters
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="col-lg-8">
+                <!-- Quick Filters -->
+                <div class="filters-section">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0">Quick Filters</h5>
+                        <span class="text-muted" id="resultsCount">24 residences found</span>
+                    </div>
+                    <div class="d-flex flex-wrap" id="filterButtons">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="verified">Verified Only</button>
+                        <button class="filter-btn" data-filter="available">Available Now</button>
+                        <button class="filter-btn" data-filter="budget">Budget Friendly</button>
+                        <button class="filter-btn" data-filter="near">Near Campus</button>
+                        <button class="filter-btn" data-filter="female">Female Only</button>
+                        <button class="filter-btn" data-filter="male">Male Only</button>
+                    </div>
+                </div>
+
+                <!-- Places Grid -->
+                <div class="places-section">
+                    <div class="places-grid" id="residencesContainer">
+                        <!-- Residence cards will be loaded dynamically -->
+                    </div>
+
+                    <!-- Loading Indicator -->
+                    <div id="loadingIndicator" class="text-center my-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Loading residences...</p>
+                    </div>
+
+                    <!-- No Results Message -->
+                    <div id="noResults" class="text-center my-5" style="display: none;">
+                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                        <h4>No residences found</h4>
+                        <p class="text-muted">Try adjusting your filters or search criteria</p>
+                        <button class="btn btn-primary" id="resetSearch">Reset Search</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Compare Bar -->
+    <div class="compare-bar" id="compareBar">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span id="compareCount">0 residences selected</span>
+                    <small class="text-muted ms-2">(Max: 3)</small>
+                </div>
+                <div>
+                    <button class="btn btn-outline-secondary me-2" id="clearCompare">Clear</button>
+                    <button class="btn btn-primary" id="compareBtn" disabled>Compare Selected</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map Toggle (Once we are advanced) -->
+    <div class="map-toggle">
+        <button class="map-toggle-btn" id="toggleMapView">
+            <i class="fas fa-map"></i>
+        </button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h5 class="mb-3">ResLocator</h5>
+                    <p class="opacity-75">South Africa's leading student accommodation platform connecting students with safe, affordable residences.</p>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-white fs-5"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-white fs-5"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-white fs-5"><i class="bi bi-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4">
+                    <h6>For Students</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="search.html" class="text-white opacity-75 text-decoration-none">Find Accommodation</a></li>
+                        <li><a href="#" class="text-white opacity-75 text-decoration-none">Student Guide</a></li>
+                        <li><a href="#" class="text-white opacity-75 text-decoration-none">Safety Tips</a></li>
+                        <li><a href="#" class="text-white opacity-75 text-decoration-none">Budget Calculator</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4">
+                    <h6>For Landlords</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white opacity-75 text-decoration-none">List Property</a></li>
+                        <li><a href="#" class="text-white opacity-75 text-decoration-none">Verification</a></li>
+                        <li><a href="#" class="text-white opacity-75 text-decoration-none">Resources</a></li>
+                        <li><a href="#" class="text-white opacity-75 text-decoration-none">Support</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-4 mb-4">
+                    <h6>Need Help?</h6>
+                    <p class="opacity-75">Contact our student support team</p>
+                    <div class="mb-3">
+                        <a href="mailto:support@reslocator.co.za" class="text-white text-decoration-none">
+                            <i class="bi bi-envelope me-2"></i>support@reslocator.co.za
+                        </a>
+                    </div>
+                    <div>
+                        <a href="tel:+27123456789" class="text-white text-decoration-none">
+                            <i class="bi bi-telephone me-2"></i>+27 31 978 1011
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <hr class="opacity-25">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0 opacity-75">&copy; 2024 ResLocator Student Accommodation. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="#" class="text-white opacity-75 text-decoration-none me-3">Privacy Policy</a>
+                    <a href="#" class="text-white opacity-75 text-decoration-none">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Sample student residences data (bro this is the format it must be in for the search filters 
+        // to work properly even in your backend, so make sure to follow this structure when 
+        // fetching from the database or API)
+        // Just push this array to the backend and make sure to update it with real data from the database
+        const studentResidences = [
+            {
+                id: 1,
+                title: 'UCT Upper Campus Residence',
+                university: 'uct',
+                type: 'residence',
+                price: 4500,
+                availability: 'High',
+                verified: true,
+                image: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                location: 'Upper Campus, Cape Town',
+                distance: 0.5,
+                rating: 4.7,
+                amenities: ['WiFi', 'Laundry', 'Study Area', 'Security'],
+                features: {
+                    bedrooms: 'Single',
+                    bathrooms: 'Shared',
+                    capacity: '1 student',
+                    gender: 'Mixed'
+                },
+                tags: ['On Campus', 'Study Areas', '24/7 Security', 'Residence'],
+                link: '#'
+            },
+            {
+                id: 2,
+                title: 'Wits Braamfontein Student House',
+                university: 'wits',
+                type: 'house',
+                price: 3200,
+                availability: 'Medium',
+                verified: true,
+                image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                location: 'Braamfontein, Johannesburg',
+                distance: 1.2,
+                rating: 4.5,
+                amenities: ['WiFi', 'Kitchen', 'Security', 'Cleaning'],
+                features: {
+                    bedrooms: 'Shared',
+                    bathrooms: 'Shared',
+                    capacity: '4 students',
+                    gender: 'Mixed'
+                },
+                tags: ['Near Campus', 'Shared Living', 'Budget', 'House'],
+                link: '#'
+            },
+            {
+                id: 3,
+                title: 'UP Hatfield Private Residence',
+                university: 'up',
+                type: 'private',
+                price: 5200,
+                availability: 'Low',
+                verified: true,
+                image: 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                location: 'Hatfield, Pretoria',
+                distance: 0.8,
+                rating: 4.8,
+                amenities: ['WiFi', 'Laundry', 'Kitchen', 'Security', 'Cleaning'],
+                features: {
+                    bedrooms: 'Single',
+                    bathrooms: 'Private',
+                    capacity: '1 student',
+                    gender: 'Female Only'
+                },
+                tags: ['Private Bath', 'Female Only', 'Luxury', 'Residence'],
+                link: '#'
+            },
+            {
+                id: 4,
+                title: 'UKZN Howard College Flat',
+                university: 'ukzn',
+                type: 'flat',
+                price: 2800,
+                availability: 'High',
+                verified: false,
+                image: 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                location: 'Howard College, Durban',
+                distance: 2.5,
+                rating: 4.3,
+                amenities: ['WiFi', 'Kitchen', 'Study Area'],
+                features: {
+                    bedrooms: 'Shared',
+                    bathrooms: 'Shared',
+                    capacity: '2 students',
+                    gender: 'Mixed'
+                },
+                tags: ['Shared Flat', 'Budget', 'Self-Catering', 'Flat'],
+                link: '#'
+            },
+            {
+                id: 5,
+                title: 'UJ Auckland Park Residence',
+                university: 'uj',
+                type: 'residence',
+                price: 3800,
+                availability: 'Medium',
+                verified: true,
+                image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                location: 'Auckland Park, Johannesburg',
+                distance: 1.0,
+                rating: 4.6,
+                amenities: ['WiFi', 'Laundry', 'Security', 'Study Area', 'Cleaning'],
+                features: {
+                    bedrooms: 'Single',
+                    bathrooms: 'Shared',
+                    capacity: '1 student',
+                    gender: 'Male Only'
+                },
+                tags: ['Campus Living', 'Male Only', 'Secure', 'Residence'],
+                link: '#'
+            },
+            {
+                id: 6,
+                title: 'Stellenbosch Dorp Street House',
+                university: 'sun',
+                type: 'house',
+                price: 3500,
+                availability: 'High',
+                verified: true,
+                image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                location: 'Dorp Street, Stellenbosch',
+                distance: 3.2,
+                rating: 4.4,
+                amenities: ['WiFi', 'Kitchen', 'Laundry', 'Study Area'],
+                features: {
+                    bedrooms: 'Shared',
+                    bathrooms: 'Shared',
+                    capacity: '5 students',
+                    gender: 'Mixed'
+                },
+                tags: ['Student House', 'Social', 'Budget', 'House'],
+                link: '#'
+            }
+        ];
+
+        // Compare array
+        let compareItems = [];
+
+        // Render residences
+        function renderResidences(residences = studentResidences) {
+            const container = document.getElementById('residencesContainer');
+            const loading = document.getElementById('loadingIndicator');
+            const noResults = document.getElementById('noResults');
+            
+            loading.style.display = 'none';
+            
+            if (residences.length === 0) {
+                container.innerHTML = '';
+                noResults.style.display = 'block';
+                document.getElementById('resultsCount').textContent = '0 residences found';
+                return;
+            }
+            
+            noResults.style.display = 'none';
+            container.innerHTML = '';
+            
+            residences.forEach(residence => {
+                const card = document.createElement('div');
+                card.className = 'residence-card';
+                card.dataset.id = residence.id;
+                
+                // Format price
+                const formattedPrice = residence.price.toLocaleString('en-ZA', {
+                    style: 'currency',
+                    currency: 'ZAR',
+                    minimumFractionDigits: 0
+                });
+                
+                card.innerHTML = `
+                    <div class="residence-image">
+                        <img src="${residence.image}" alt="${residence.title}">
+                        ${residence.verified ? '<div class="verified-badge"><i class="fas fa-shield-alt"></i> Verified</div>' : ''}
+                        <div class="availability-badge" style="background: ${residence.availability === 'High' ? '#26a269' : residence.availability === 'Medium' ? '#e5a50a' : '#dc3545'}">
+                            ${residence.availability} Availability
+                        </div>
+                        <div class="price-tag">
+                            ${formattedPrice}/month
+                        </div>
+                    </div>
+                    <div class="residence-info">
+                        <h4>${residence.title}</h4>
+                        <div class="residence-location">
+                            <i class="bi bi-geo-alt"></i>
+                            <span>${residence.location}</span>
+                        </div>
+                        <div class="distance-indicator">
+                            <i class="fas fa-walking"></i>
+                            ${residence.distance}km from campus
+                        </div>
+                        <div class="residence-features">
+                            <div class="feature">
+                                <i class="fas fa-bed"></i>
+                                <span>${residence.features.bedrooms}</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-bath"></i>
+                                <span>${residence.features.bathrooms}</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-users"></i>
+                                <span>${residence.features.capacity}</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas ${residence.features.gender.includes('Female') ? 'fa-female' : residence.features.gender.includes('Male') ? 'fa-male' : 'fa-venus-mars'}"></i>
+                                <span>${residence.features.gender}</span>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                <span class="text-warning">
+                                    <i class="fas fa-star"></i> ${residence.rating}
+                                </span>
+                            </div>
+                            <div>
+                                <button class="btn btn-sm btn-outline-primary me-2 compare-btn" data-id="${residence.id}">
+                                    <i class="fas fa-balance-scale"></i> Compare
+                                </button>
+                                <button class="btn btn-sm btn-primary view-btn" data-id="${residence.id}">
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            
+            document.getElementById('resultsCount').textContent = `${residences.length} residences found`;
+            
+            // Event listeners for buttons
+            document.querySelectorAll('.compare-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const id = parseInt(this.dataset.id);
+                    toggleCompare(id);
+                });
+            });
+            
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const id = parseInt(this.dataset.id);
+                    viewResidenceDetails(id);
+                });
+            });
+        }
+
+        // Initialize for all residences
+        renderResidences();
+
+        // Filter functionality
+        function applyFilters() {
+            const university = document.getElementById('universityFilter').value;
+            const priceRange = document.getElementById('priceRange').value;
+            const distance = document.getElementById('distanceFilter').value;
+            
+            // Get checked accommodation types
+            const types = [];
+            if (document.getElementById('typeResidence').checked) types.push('residence');
+            if (document.getElementById('typePrivate').checked) types.push('private');
+            if (document.getElementById('typeShared').checked) types.push('flat');
+            if (document.getElementById('typeHouse').checked) types.push('house');
+            
+            // Get checked goods/amenities
+            const amenities = [];
+            if (document.getElementById('amenityWifi').checked) amenities.push('WiFi');
+            if (document.getElementById('amenityLaundry').checked) amenities.push('Laundry');
+            if (document.getElementById('amenityKitchen').checked) amenities.push('Kitchen');
+            if (document.getElementById('amenitySecurity').checked) amenities.push('Security');
+            if (document.getElementById('amenityCleaning').checked) amenities.push('Cleaning');
+            if (document.getElementById('amenityStudy').checked) amenities.push('Study Area');
+            
+            // Filter residences
+            let filtered = studentResidences.filter(residence => {
+                // University filter
+                if (university !== 'all' && residence.university !== university) return false;
+                
+                // Price filter
+                if (residence.price > parseInt(priceRange)) return false;
+                
+                // Distance filter
+                if (distance !== 'any' && residence.distance > parseFloat(distance)) return false;
+                
+                // Type filter
+                if (types.length > 0 && !types.includes(residence.type)) return false;
+                
+                // Amenities filter
+                if (amenities.length > 0) {
+                    const hasAllAmenities = amenities.every(amenity => 
+                        residence.amenities.includes(amenity)
+                    );
+                    if (!hasAllAmenities) return false;
+                }
+                
+                return true;
+            });
+            
+            renderResidences(filtered);
+        }
+
+        // Quick filters
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const filter = this.dataset.filter;
+                let filtered = studentResidences;
+                
+                switch(filter) {
+                    case 'verified':
+                        filtered = studentResidences.filter(r => r.verified);
+                        break;
+                    case 'available':
+                        filtered = studentResidences.filter(r => r.availability === 'High');
+                        break;
+                    case 'budget':
+                        filtered = studentResidences.filter(r => r.price <= 3500);
+                        break;
+                    case 'near':
+                        filtered = studentResidences.filter(r => r.distance <= 1);
+                        break;
+                    case 'female':
+                        filtered = studentResidences.filter(r => r.features.gender === 'Female Only');
+                        break;
+                    case 'male':
+                        filtered = studentResidences.filter(r => r.features.gender === 'Male Only');
+                        break;
+                }
+                
+                renderResidences(filtered);
+            });
+        });
+
+        // Apply filters button
+        document.getElementById('applyFilters').addEventListener('click', applyFilters);
+
+        // Reset filters
+        document.getElementById('resetFilters').addEventListener('click', function() {
+            document.getElementById('universityFilter').value = 'all';
+            document.getElementById('priceRange').value = 10000;
+            document.getElementById('distanceFilter').value = 'any';
+            document.querySelectorAll('.form-check-input').forEach(cb => cb.checked = false);
+            document.getElementById('typeResidence').checked = true;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('.filter-btn[data-filter="all"]').classList.add('active');
+            renderResidences(studentResidences);
+        });
+
+        // Reset search
+        document.getElementById('resetSearch').addEventListener('click', function() {
+            document.getElementById('resetFilters').click();
+        });
+
+        // Price range display
+        const priceRange = document.getElementById('priceRange');
+        const priceMin = document.getElementById('priceMin');
+        const priceMax = document.getElementById('priceMax');
+        
+        priceRange.addEventListener('input', function() {
+            priceMin.textContent = '1000';
+            priceMax.textContent = this.value;
+        });
+
+        // Compare functionality
+        function toggleCompare(id) {
+            const index = compareItems.indexOf(id);
+            const compareBtn = document.querySelector(`.compare-btn[data-id="${id}"]`);
+            
+            if (index === -1) {
+                if (compareItems.length >= 3) {
+                    alert('Maximum 3 residences can be compared');
+                    return;
+                }
+                compareItems.push(id);
+                compareBtn.innerHTML = '<i class="fas fa-check"></i> Added';
+                compareBtn.classList.remove('btn-outline-primary');
+                compareBtn.classList.add('btn-success');
+            } else {
+                compareItems.splice(index, 1);
+                compareBtn.innerHTML = '<i class="fas fa-balance-scale"></i> Compare';
+                compareBtn.classList.remove('btn-success');
+                compareBtn.classList.add('btn-outline-primary');
+            }
+            
+            updateCompareBar();
+        }
+
+        function updateCompareBar() {
+            const compareBar = document.getElementById('compareBar');
+            const compareCount = document.getElementById('compareCount');
+            const compareBtn = document.getElementById('compareBtn');
+            
+            compareCount.textContent = `${compareItems.length} residences selected`;
+            
+            if (compareItems.length > 0) {
+                compareBar.classList.add('show');
+                compareBtn.disabled = false;
+            } else {
+                compareBar.classList.remove('show');
+                compareBtn.disabled = true;
+            }
+        }
+
+        // Clear compare
+        document.getElementById('clearCompare').addEventListener('click', function() {
+            compareItems = [];
+            document.querySelectorAll('.compare-btn').forEach(btn => {
+                btn.innerHTML = '<i class="fas fa-balance-scale"></i> Compare';
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-outline-primary');
+            });
+            updateCompareBar();
+        });
+
+        // Compare button
+        document.getElementById('compareBtn').addEventListener('click', function() {
+            if (compareItems.length < 2) {
+                alert('Please select at least 2 residences to compare');
+                return;
+            }
+            alert(`Comparing residences: ${compareItems.join(', ')}`);
+            // In a real app, this would open a comparison modal or page
+        });
+
+        // View residence details
+        function viewResidenceDetails(id) {
+            const residence = studentResidences.find(r => r.id === id);
+            if (residence) {
+                // I'll add the details page later, for now just showing an alert with details
+                alert(`Viewing details for: ${residence.title}\n\nPrice: R${residence.price}/month\nLocation: ${residence.location}\nDistance: ${residence.distance}km from campus\nAmenities: ${residence.amenities.join(', ')}`);
+            }
+        }
+
+        // Map view toggle
+        document.getElementById('toggleMapView').addEventListener('click', function() {
+            // Once we implemented the Maps API, we will toggle between list and map view here
+            alert('Map view feature coming soon!');
+        });
+
+        // Load URL parameters if any
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const uni = urlParams.get('uni');
+            const type = urlParams.get('type');
+            const budget = urlParams.get('budget');
+            
+            if (uni) {
+                document.getElementById('universityFilter').value = uni;
+            }
+            
+            if (type) {
+                document.querySelectorAll('.form-check-input').forEach(cb => cb.checked = false);
+                const typeCheckbox = document.getElementById(`type${type.charAt(0).toUpperCase() + type.slice(1)}`);
+                if (typeCheckbox) typeCheckbox.checked = true;
+            }
+            
+            if (budget) {
+                const [min, max] = budget.split('-');
+                if (max === '+') {
+                    priceRange.value = 10000;
+                } else {
+                    priceRange.value = parseInt(max) || 10000;
+                }
+                priceMax.textContent = priceRange.value;
+            }
+            
+            // Apply filters if URL parameters exist
+            if (uni || type || budget) {
+                setTimeout(applyFilters, 100);
+            }
+        });
+    </script>
+</body>
+</html>
