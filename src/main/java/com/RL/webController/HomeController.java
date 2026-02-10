@@ -11,7 +11,7 @@ public class HomeController {
     @GetMapping("/")
     public String home(){
         log.info("application started successfully");
-        return "homePage";
+        return "Contribute/index";
     }
 
     @GetMapping("/login")
